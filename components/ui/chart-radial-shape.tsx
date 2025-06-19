@@ -28,6 +28,7 @@ const chartData = [
 const chartConfig = {
   visitors: {
     label: "Visitors",
+    color: "var(--chart-1)",
   },
   safari: {
     label: "Safari",
@@ -45,7 +46,6 @@ export function ChartRadialShape() {
       <CardContent className="flex-1 pb-0">
         <ChartContainer
           config={chartConfig}
-          className="mx-auto aspect-square max-h-[250px]"
         >
           <RadialBarChart
             data={chartData}

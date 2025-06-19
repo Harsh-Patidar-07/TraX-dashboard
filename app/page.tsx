@@ -4,9 +4,9 @@ import { Card } from "@/components/ui/card"
 import { useEffect, useState } from "react"
 import { fetchProgress, saveProgress, fetchOngoingChapters, saveOngoingChapters } from "@/lib/progressApi"
 import { motion, AnimatePresence } from "framer-motion"
-import { chapters as mathChapters } from "./subjects/mathematics/page"
-import { chapters as physicsChapters } from "./subjects/physics/page"
-import { chapters as chemistryChapters } from "./subjects/chemistry/page"
+import { chapters as mathChapters } from "./subjects/mathematics/chapters"
+import { chapters as physicsChapters } from "./subjects/physics/chapters"
+import { chapters as chemistryChapters } from "./subjects/chemistry/chapters"
 
 const mathChaptersTyped: { name: string; topics: string[] }[] = mathChapters;
 const physicsChaptersTyped: { name: string; topics: string[] }[] = physicsChapters;
