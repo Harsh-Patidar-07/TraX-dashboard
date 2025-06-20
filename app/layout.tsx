@@ -5,6 +5,7 @@ import "./globals.css";
 import { Sidebar } from "@/components/ui/sidebar";
 import dynamic from "next/dynamic";
 import ClientLayout from "./client-layout";
+import VantaBackgroundClient from "@/components/ui/VantaBackgroundClient";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,8 +22,6 @@ const museoModerno = MuseoModerno({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
-
-const VantaBackground = dynamic(() => import("@/components/ui/vanta-background"), { ssr: false });
 
 export const metadata: Metadata = {
   title: "TraX",
@@ -42,7 +41,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${museoModerno.variable} antialiased text-foreground min-h-screen`}
       >
-        <VantaBackground />
+        <VantaBackgroundClient />
         <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
