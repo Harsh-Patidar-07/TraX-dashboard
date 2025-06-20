@@ -12,11 +12,15 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import Link from "next/link"
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
+import { LoginForm } from "@/components/login-form"
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7 // 7 days
 
 export function Sidebar({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean; setIsCollapsed: (v: boolean) => void }) {
+  const [authDialogOpen, setAuthDialogOpen] = React.useState(false)
+
   const toggleSidebar = () => {
     const newState = !isCollapsed
     setIsCollapsed(newState)
@@ -151,49 +155,28 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean;
 
       <div className="mt-auto p-2 bg-transparent">
         <div className="flex flex-col gap-2 bg-transparent">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  asChild
-                  variant="ghost"
-                  size="icon"
-                  className={cn(
-                    "h-9 w-9",
-                    !isCollapsed && "w-full justify-start gap-2"
-                  )}
-                >
-                  <Link href="/help">
-                    <HelpCircle className="h-5 w-5" />
-                    {!isCollapsed && <span>Help</span>}
-                  </Link>
-                </Button>
-              </TooltipTrigger>
-              {isCollapsed && <TooltipContent side="right">Help</TooltipContent>}
-            </Tooltip>
-          </TooltipProvider>
-
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  asChild
-                  variant="ghost"
-                  size="icon"
-                  className={cn(
-                    "h-9 w-9",
-                    !isCollapsed && "w-full justify-start gap-2"
-                  )}
-                >
-                  <Link href="/settings">
-                    <Settings className="h-5 w-5" />
-                    {!isCollapsed && <span>Settings</span>}
-                  </Link>
-                </Button>
-              </TooltipTrigger>
-              {isCollapsed && <TooltipContent side="right">Settings</TooltipContent>}
-            </Tooltip>
-          </TooltipProvider>
+          {/* Profile/User Button (opens login/signup modal) */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className={cn(
+              "h-9 w-9",
+              !isCollapsed && "w-full justify-start gap-2"
+            )}
+            onClick={() => setAuthDialogOpen(true)}
+          >
+            {/* Replace with user avatar if logged in */}
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-5 w-5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25a8.25 8.25 0 1115 0v.75a.75.75 0 01-.75.75h-13.5a.75.75 0 01-.75-.75v-.75z" />
+            </svg>
+            {!isCollapsed && <span>Profile</span>}
+          </Button>
+          <Dialog open={authDialogOpen} onOpenChange={setAuthDialogOpen}>
+            <DialogContent className="max-w-sm p-0 bg-transparent shadow-none border-none">
+              <DialogTitle className="sr-only">Sign in to TraX</DialogTitle>
+              <LoginForm />
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     </div>

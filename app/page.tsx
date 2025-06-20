@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { chapters as mathChapters } from "./subjects/mathematics/chapters"
 import { chapters as physicsChapters } from "./subjects/physics/chapters"
 import { chapters as chemistryChapters } from "./subjects/chemistry/chapters"
+import { useSupabaseUser } from "@/hooks/use-supabase-user"
 
 const mathChaptersTyped: { name: string; topics: string[] }[] = mathChapters;
 const physicsChaptersTyped: { name: string; topics: string[] }[] = physicsChapters;
@@ -26,18 +27,20 @@ const chapters = [
 ]
 
 export default function DashboardPage() {
+  const { user, loading } = useSupabaseUser();
   const [ongoing, setOngoing] = useState<{ subject: string, chapterIdx: number }[]>([])
   const [checkedTopics, setCheckedTopics] = useState<{ [key: string]: boolean[] }>({})
-  const userId = "demo-user"
+  const userId = user?.id;
 
   useEffect(() => {
+    if (!userId) return;
     async function loadOngoingAndProgress() {
       try {
         const [mathOngoing, physicsOngoing, chemistryOngoing, progress] = await Promise.all([
-          fetchOngoingChapters(userId, 'mathematics'),
-          fetchOngoingChapters(userId, 'physics'),
-          fetchOngoingChapters(userId, 'chemistry'),
-          fetchProgress(userId)
+          fetchOngoingChapters(userId!, 'mathematics'),
+          fetchOngoingChapters(userId!, 'physics'),
+          fetchOngoingChapters(userId!, 'chemistry'),
+          fetchProgress(userId!)
         ])
         // Build a combined ongoing list with subject info
         const mathArr = Array.isArray(mathOngoing) ? mathOngoing : [];
@@ -66,7 +69,7 @@ export default function DashboardPage() {
       }
     }
     loadOngoingAndProgress()
-  }, [])
+  }, [userId])
 
   const getChaptersArray = (subject: string): { name: string; topics: string[] }[] => {
     if (subject === 'mathematics') return mathChaptersTyped;
@@ -75,14 +78,19 @@ export default function DashboardPage() {
     return [];
   };
 
+  function showLoginPrompt() {
+    alert('Please log in to use this feature.');
+  }
+
   const handleToggleTopic = (subject: string, chapterIdx: number, topicIdx: number) => {
+    if (!userId) return showLoginPrompt();
     setCheckedTopics((prev) => {
       const key = `${subject}-${chapterIdx}`
       const chaptersArr = getChaptersArray(subject)
       const chapterChecks = prev[key] || Array(chaptersArr[chapterIdx].topics.length).fill(false)
       const newChecks = [...chapterChecks]
       newChecks[topicIdx] = !newChecks[topicIdx]
-      saveProgress(userId, chapterIdx, newChecks).catch((err) => {
+      saveProgress(userId!, chapterIdx, newChecks).catch((err) => {
         console.error('Error saving progress:', err)
       })
       return { ...prev, [key]: newChecks }
@@ -97,15 +105,15 @@ export default function DashboardPage() {
   }
 
   const handleMarkCompleted = (subject: string, chapterIdx: number) => {
+    if (!userId) return showLoginPrompt();
     const chaptersArr = getChaptersArray(subject);
     const allChecked = Array(chaptersArr[chapterIdx].topics.length).fill(true);
     setCheckedTopics((prev) => {
-      saveProgress(userId, chapterIdx, allChecked).catch((err) => {
+      saveProgress(userId!, chapterIdx, allChecked).catch((err) => {
         console.error('Error saving progress:', err);
       });
       return { ...prev, [`${subject}-${chapterIdx}`]: allChecked };
     });
-    // Remove from ongoing immediately for animation
     setOngoing((prev) =>
       prev.filter((item) => !(item.subject === subject && item.chapterIdx === chapterIdx))
     );
@@ -131,6 +139,8 @@ export default function DashboardPage() {
   const mathProgress = getSubjectProgress('mathematics');
   const physicsProgress = getSubjectProgress('physics');
   const chemistryProgress = getSubjectProgress('chemistry');
+
+  if (loading) return <div className="p-8 text-center">Loading...</div>;
 
   return (
     <div className="space-y-8">
@@ -323,7 +333,7 @@ export default function DashboardPage() {
                                 const updatedIndices = updated
                                   .filter((item) => item.subject === subject)
                                   .map((item) => item.chapterIdx);
-                                saveOngoingChapters(userId, subject, updatedIndices).catch(console.error);
+                                saveOngoingChapters(userId!, subject, updatedIndices).catch(console.error);
                                 return updated;
                               });
                             }}

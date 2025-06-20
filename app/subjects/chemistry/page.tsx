@@ -5,20 +5,23 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { fetchProgress, saveProgress, fetchOngoingChapters, saveOngoingChapters } from "@/lib/progressApi";
 import { chapters } from "./chapters";
+import { useSupabaseUser } from "@/hooks/use-supabase-user";
 
 export default function ChemistryPage() {
+  const { user, loading } = useSupabaseUser();
   const [expandedChapter, setExpandedChapter] = useState<null | number>(null)
   const [checkedTopics, setCheckedTopics] = useState<{ [chapterIdx: number]: boolean[] }>({})
   const [ongoingChapters, setOngoingChaptersState] = useState<number[]>([])
   const [addingOngoing, setAddingOngoing] = useState<{ [idx: number]: boolean }>({});
-  const userId = "demo-user";
+  const userId = user?.id;
 
   useEffect(() => {
+    if (!userId) return;
     async function loadOngoingAndProgress() {
       try {
         const [ongoing, progress] = await Promise.all([
-          fetchOngoingChapters(userId, 'chemistry'),
-          fetchProgress(userId)
+          fetchOngoingChapters(userId!, 'chemistry'),
+          fetchProgress(userId!)
         ]);
         setOngoingChaptersState(ongoing || []);
         if (progress && progress.length > 0) {
@@ -33,14 +36,19 @@ export default function ChemistryPage() {
       }
     }
     loadOngoingAndProgress();
-  }, []);
+  }, [userId]);
+
+  function showLoginPrompt() {
+    alert('Please log in to use this feature.');
+  }
 
   const handleToggleTopic = (chapterIdx: number, topicIdx: number) => {
+    if (!userId) return showLoginPrompt();
     setCheckedTopics((prev) => {
       const chapterChecks = prev[chapterIdx] || Array(chapters[chapterIdx].topics.length).fill(false);
       const newChecks = [...chapterChecks];
       newChecks[topicIdx] = !newChecks[topicIdx];
-      saveProgress(userId, chapterIdx, newChecks).catch((err) => {
+      saveProgress(userId!, chapterIdx, newChecks).catch((err) => {
         console.error('Error saving progress:', err);
       });
       return { ...prev, [chapterIdx]: newChecks };
@@ -48,6 +56,7 @@ export default function ChemistryPage() {
   };
 
   const handleMarkOngoing = async (idx: number) => {
+    if (!userId) return showLoginPrompt();
     setAddingOngoing((prev) => ({ ...prev, [idx]: true }));
     setOngoingChaptersState((prev) => {
       let updated;
@@ -56,7 +65,7 @@ export default function ChemistryPage() {
       } else {
         updated = [...prev, idx];
       }
-      saveOngoingChapters(userId, 'chemistry', updated).catch(console.error);
+      saveOngoingChapters(userId!, 'chemistry', updated).catch(console.error);
       return updated;
     });
     setTimeout(() => {
@@ -76,10 +85,12 @@ export default function ChemistryPage() {
       const filtered = ongoingChapters.filter((chapterIdx) => !isChapterCompleted(chapterIdx));
       if (filtered.length !== ongoingChapters.length) {
         setOngoingChaptersState(filtered);
-        saveOngoingChapters(userId, 'chemistry', filtered).catch(console.error);
+        saveOngoingChapters(userId!, 'chemistry', filtered).catch(console.error);
       }
     }
   }, [checkedTopics]);
+
+  if (loading) return <div className="p-8 text-center">Loading...</div>;
 
   return (
     <div className="min-h-screen py-12 px-4">
