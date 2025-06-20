@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { MuseoModerno } from "next/font/google";
 import "./globals.css";
 import { Sidebar } from "@/components/ui/sidebar";
-import VantaBackground from "@/components/ui/vanta-background";
+import dynamic from "next/dynamic";
 import ClientLayout from "./client-layout";
 
 const geistSans = Geist({
@@ -21,6 +21,8 @@ const museoModerno = MuseoModerno({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
+
+const VantaBackground = dynamic(() => import("@/components/ui/vanta-background"), { ssr: false });
 
 export const metadata: Metadata = {
   title: "TraX",
