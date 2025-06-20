@@ -111,6 +111,27 @@ export default function DashboardPage() {
     );
   };
 
+  // Helper to calculate subject progress
+  const getSubjectProgress = (subject: string) => {
+    const chaptersArr = getChaptersArray(subject);
+    let totalTopics = 0;
+    let checkedTopicsCount = 0;
+    chaptersArr.forEach((chapter, chapterIdx) => {
+      totalTopics += chapter.topics.length;
+      const checks = checkedTopics[`${subject}-${chapterIdx}`] || [];
+      checkedTopicsCount += checks.filter(Boolean).length;
+    });
+    if (totalTopics === 0) return 0;
+    return Math.round((checkedTopicsCount / totalTopics) * 100);
+  };
+
+  // For SVG circle: circumference = 2 * pi * r = 2 * 3.14 * 42 ≈ 264
+  const circleCircumference = 264;
+
+  const mathProgress = getSubjectProgress('mathematics');
+  const physicsProgress = getSubjectProgress('physics');
+  const chemistryProgress = getSubjectProgress('chemistry');
+
   return (
     <div className="space-y-8">
       <div>
@@ -143,14 +164,15 @@ export default function DashboardPage() {
                   cx="50"
                   cy="50"
                   r="42"
-                  strokeDasharray="264"
-                  strokeDashoffset="66"
+                  strokeDasharray={circleCircumference}
+                  strokeDashoffset={circleCircumference - (mathProgress / 100) * circleCircumference}
                   strokeLinecap="round"
                   transform="rotate(-90 50 50)"
+                  style={{ transition: 'stroke-dashoffset 0.6s cubic-bezier(0.4,0,0.2,1)' }}
                 />
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-2xl font-bold">75%</span>
+                <span className="text-2xl font-bold">{mathProgress}%</span>
               </div>
             </div>
             <div className="text-center">
@@ -182,14 +204,15 @@ export default function DashboardPage() {
                   cx="50"
                   cy="50"
                   r="42"
-                  strokeDasharray="264"
-                  strokeDashoffset="132"
+                  strokeDasharray={circleCircumference}
+                  strokeDashoffset={circleCircumference - (physicsProgress / 100) * circleCircumference}
                   strokeLinecap="round"
                   transform="rotate(-90 50 50)"
+                  style={{ transition: 'stroke-dashoffset 0.6s cubic-bezier(0.4,0,0.2,1)' }}
                 />
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-2xl font-bold">50%</span>
+                <span className="text-2xl font-bold">{physicsProgress}%</span>
               </div>
             </div>
             <div className="text-center">
@@ -221,14 +244,15 @@ export default function DashboardPage() {
                   cx="50"
                   cy="50"
                   r="42"
-                  strokeDasharray="264"
-                  strokeDashoffset="198"
+                  strokeDasharray={circleCircumference}
+                  strokeDashoffset={circleCircumference - (chemistryProgress / 100) * circleCircumference}
                   strokeLinecap="round"
                   transform="rotate(-90 50 50)"
+                  style={{ transition: 'stroke-dashoffset 0.6s cubic-bezier(0.4,0,0.2,1)' }}
                 />
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-2xl font-bold">25%</span>
+                <span className="text-2xl font-bold">{chemistryProgress}%</span>
               </div>
             </div>
             <div className="text-center">
