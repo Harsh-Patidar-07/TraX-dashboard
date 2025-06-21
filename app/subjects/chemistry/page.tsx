@@ -10,9 +10,10 @@ import { useSupabaseUser } from "@/hooks/use-supabase-user";
 export default function ChemistryPage() {
   const { user, loading } = useSupabaseUser();
   const [expandedChapter, setExpandedChapter] = useState<null | number>(null)
-  const [checkedTopics, setCheckedTopics] = useState<{ [chapterIdx: number]: boolean[] }>({})
+  const [checkedTopics, setCheckedTopics] = useState<{ [key: string]: boolean[] }>({})
   const [ongoingChapters, setOngoingChaptersState] = useState<number[]>([])
   const [addingOngoing, setAddingOngoing] = useState<{ [idx: number]: boolean }>({});
+  const subject = 'chemistry';
   const userId = user?.id;
 
   useEffect(() => {
@@ -20,14 +21,14 @@ export default function ChemistryPage() {
     async function loadOngoingAndProgress() {
       try {
         const [ongoing, progress] = await Promise.all([
-          fetchOngoingChapters(userId!, 'chemistry'),
-          fetchProgress(userId!, 'chemistry')
+          fetchOngoingChapters(userId!, subject),
+          fetchProgress(userId!, subject)
         ]);
         setOngoingChaptersState(ongoing || []);
         if (progress && progress.length > 0) {
-          const progressMap: { [chapterIdx: number]: boolean[] } = {};
+          const progressMap: { [key: string]: boolean[] } = {};
           progress.forEach((row: any) => {
-            progressMap[row.chapter_idx] = row.checked_topics;
+            progressMap[`${subject}-${row.chapter_idx}`] = row.checked_topics;
           });
           setCheckedTopics(progressMap);
         }
@@ -45,13 +46,14 @@ export default function ChemistryPage() {
   const handleToggleTopic = (chapterIdx: number, topicIdx: number) => {
     if (!userId) return showLoginPrompt();
     setCheckedTopics((prev) => {
-      const chapterChecks = prev[chapterIdx] || Array(chapters[chapterIdx].topics.length).fill(false);
+      const key = `${subject}-${chapterIdx}`;
+      const chapterChecks = prev[key] || Array(chapters[chapterIdx].topics.length).fill(false);
       const newChecks = [...chapterChecks];
       newChecks[topicIdx] = !newChecks[topicIdx];
-      saveProgress(userId!, 'chemistry', chapterIdx, newChecks).catch((err) => {
+      saveProgress(userId!, subject, chapterIdx, newChecks).catch((err) => {
         console.error('Error saving progress:', err);
       });
-      return { ...prev, [chapterIdx]: newChecks };
+      return { ...prev, [key]: newChecks };
     });
   };
 
@@ -65,7 +67,7 @@ export default function ChemistryPage() {
       } else {
         updated = [...prev, idx];
       }
-      saveOngoingChapters(userId!, 'chemistry', updated).catch(console.error);
+      saveOngoingChapters(userId!, subject, updated).catch(console.error);
       return updated;
     });
     setTimeout(() => {
@@ -75,7 +77,8 @@ export default function ChemistryPage() {
 
   // Helper to check if a chapter is completed
   const isChapterCompleted = (chapterIdx: number) => {
-    const checks = checkedTopics[chapterIdx] || [];
+    const key = `${subject}-${chapterIdx}`;
+    const checks = checkedTopics[key] || [];
     return checks.length === chapters[chapterIdx].topics.length && checks.every(Boolean);
   };
 
@@ -85,10 +88,22 @@ export default function ChemistryPage() {
       const filtered = ongoingChapters.filter((chapterIdx) => !isChapterCompleted(chapterIdx));
       if (filtered.length !== ongoingChapters.length) {
         setOngoingChaptersState(filtered);
-        saveOngoingChapters(userId!, 'chemistry', filtered).catch(console.error);
+        saveOngoingChapters(userId!, subject, filtered).catch(console.error);
       }
     }
   }, [checkedTopics]);
+
+  const handleMarkCompleted = (chapterIdx: number) => {
+    if (!userId) return showLoginPrompt();
+    const allChecked = Array(chapters[chapterIdx].topics.length).fill(true);
+    setCheckedTopics((prev) => {
+      const key = `${subject}-${chapterIdx}`;
+      saveProgress(userId!, subject, chapterIdx, allChecked).catch((err) => {
+        console.error('Error saving progress:', err);
+      });
+      return { ...prev, [key]: allChecked };
+    });
+  };
 
   if (loading) return <div className="p-8 text-center">Loading...</div>;
 
@@ -100,7 +115,7 @@ export default function ChemistryPage() {
         </div>
         <div className="max-w-5xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-8">
           {chapters.map((chapter, idx) => {
-            const checkedCount = checkedTopics[idx]?.filter(Boolean).length || 0;
+            const checkedCount = checkedTopics[`${subject}-${idx}`]?.filter(Boolean).length || 0;
             const percent = Math.round((checkedCount / chapter.topics.length) * 100);
             const isExpanded = expandedChapter === idx;
             return (
@@ -133,13 +148,13 @@ export default function ChemistryPage() {
                           type="checkbox"
                           className="checkbox-circle"
                           id={`topic-${idx}-${i}`}
-                          checked={!!checkedTopics[idx]?.[i]}
+                          checked={!!checkedTopics[`${subject}-${idx}`]?.[i]}
                           onChange={() => handleToggleTopic(idx, i)}
                         />
                         <label
                           htmlFor={`topic-${idx}-${i}`}
                           className={
-                            `cursor-pointer select-none transition-colors ${checkedTopics[idx]?.[i] ? 'text-green-400' : 'text-white'}`
+                            `cursor-pointer select-none transition-colors ${checkedTopics[`${subject}-${idx}`]?.[i] ? 'text-green-400' : 'text-white'}`
                           }
                         >
                           {topic}
