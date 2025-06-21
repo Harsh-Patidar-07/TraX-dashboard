@@ -21,7 +21,7 @@ export default function PhysicsPage() {
       try {
         const [ongoing, progress] = await Promise.all([
           fetchOngoingChapters(userId!, 'physics'),
-          fetchProgress(userId!)
+          fetchProgress(userId!, 'physics')
         ]);
         setOngoingChaptersState(ongoing || []);
         if (progress && progress.length > 0) {
@@ -48,7 +48,7 @@ export default function PhysicsPage() {
       const chapterChecks = prev[chapterIdx] || Array(chapters[chapterIdx].topics.length).fill(false);
       const newChecks = [...chapterChecks];
       newChecks[topicIdx] = !newChecks[topicIdx];
-      saveProgress(userId!, chapterIdx, newChecks).catch((err) => {
+      saveProgress(userId!, 'physics', chapterIdx, newChecks).catch((err) => {
         console.error('Error saving progress:', err);
       });
       return { ...prev, [chapterIdx]: newChecks };
@@ -94,7 +94,7 @@ export default function PhysicsPage() {
     if (!userId) return showLoginPrompt();
     const allChecked = Array(chapters[chapterIdx].topics.length).fill(true);
     setCheckedTopics((prev) => {
-      saveProgress(userId!, chapterIdx, allChecked).catch((err) => {
+      saveProgress(userId!, 'physics', chapterIdx, allChecked).catch((err) => {
         console.error('Error saving progress:', err);
       });
       return { ...prev, [chapterIdx]: allChecked };

@@ -1,10 +1,10 @@
 import { supabase } from './supabaseClient';
 
-// Save or update progress for a user and chapter
-export async function saveProgress(userId: string, chapterIdx: number, checkedTopics: boolean[]) {
+// Save or update progress for a user, subject, and chapter
+export async function saveProgress(userId: string, subject: string, chapterIdx: number, checkedTopics: boolean[]) {
   const { data, error } = await supabase
     .from('progress')
-    .upsert([{ user_id: userId, chapter_idx: chapterIdx, checked_topics: checkedTopics }], { onConflict: 'user_id,chapter_idx' });
+    .upsert([{ user_id: userId, subject, chapter_idx: chapterIdx, checked_topics: checkedTopics }], { onConflict: 'user_id,subject,chapter_idx' });
   if (error) {
     console.error('Supabase saveProgress error:', error.message, error.details, error.hint);
     throw new Error(error.message || 'Unknown error in saveProgress');
@@ -12,12 +12,13 @@ export async function saveProgress(userId: string, chapterIdx: number, checkedTo
   return data;
 }
 
-// Fetch all progress for a user
-export async function fetchProgress(userId: string) {
+// Fetch all progress for a user and subject
+export async function fetchProgress(userId: string, subject: string) {
   const { data, error } = await supabase
     .from('progress')
     .select('*')
-    .eq('user_id', userId);
+    .eq('user_id', userId)
+    .eq('subject', subject);
   if (error) {
     console.error('Supabase fetchProgress error:', error.message, error.details, error.hint);
     throw new Error(error.message || 'Unknown error in fetchProgress');

@@ -22,7 +22,7 @@ export default function MathematicsPage() {
       try {
         const [ongoing, progress] = await Promise.all([
           fetchOngoingChapters(userId!, 'mathematics'),
-          fetchProgress(userId!)
+          fetchProgress(userId!, 'mathematics')
         ]);
         setOngoingChaptersState(ongoing || []);
         if (progress && progress.length > 0) {
@@ -53,7 +53,7 @@ export default function MathematicsPage() {
       const chapterChecks = prev[chapterIdx] || Array(chapters[chapterIdx].topics.length).fill(false);
       const newChecks = [...chapterChecks];
       newChecks[topicIdx] = !newChecks[topicIdx];
-      saveProgress(userId!, chapterIdx, newChecks).catch((err) => {
+      saveProgress(userId!, 'mathematics', chapterIdx, newChecks).catch((err) => {
         console.error('Error saving progress:', err);
       });
       return { ...prev, [chapterIdx]: newChecks };

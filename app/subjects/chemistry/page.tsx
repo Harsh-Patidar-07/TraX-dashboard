@@ -21,7 +21,7 @@ export default function ChemistryPage() {
       try {
         const [ongoing, progress] = await Promise.all([
           fetchOngoingChapters(userId!, 'chemistry'),
-          fetchProgress(userId!)
+          fetchProgress(userId!, 'chemistry')
         ]);
         setOngoingChaptersState(ongoing || []);
         if (progress && progress.length > 0) {
@@ -48,7 +48,7 @@ export default function ChemistryPage() {
       const chapterChecks = prev[chapterIdx] || Array(chapters[chapterIdx].topics.length).fill(false);
       const newChecks = [...chapterChecks];
       newChecks[topicIdx] = !newChecks[topicIdx];
-      saveProgress(userId!, chapterIdx, newChecks).catch((err) => {
+      saveProgress(userId!, 'chemistry', chapterIdx, newChecks).catch((err) => {
         console.error('Error saving progress:', err);
       });
       return { ...prev, [chapterIdx]: newChecks };

@@ -36,11 +36,13 @@ export default function DashboardPage() {
     if (!userId) return;
     async function loadOngoingAndProgress() {
       try {
-        const [mathOngoing, physicsOngoing, chemistryOngoing, progress] = await Promise.all([
+        const [mathOngoing, physicsOngoing, chemistryOngoing, mathProgress, physicsProgress, chemistryProgress] = await Promise.all([
           fetchOngoingChapters(userId!, 'mathematics'),
           fetchOngoingChapters(userId!, 'physics'),
           fetchOngoingChapters(userId!, 'chemistry'),
-          fetchProgress(userId!)
+          fetchProgress(userId!, 'mathematics'),
+          fetchProgress(userId!, 'physics'),
+          fetchProgress(userId!, 'chemistry'),
         ])
         // Build a combined ongoing list with subject info
         const mathArr = Array.isArray(mathOngoing) ? mathOngoing : [];
@@ -51,19 +53,39 @@ export default function DashboardPage() {
         physicsArr.forEach((idx: number) => ongoingList.push({ subject: 'physics', chapterIdx: idx }));
         chemistryArr.forEach((idx: number) => ongoingList.push({ subject: 'chemistry', chapterIdx: idx }));
         setOngoing(ongoingList)
-        if (progress && progress.length > 0) {
-          const progressMap: { [key: string]: boolean[] } = {}
-          progress.forEach((row: any) => {
-            const subject = row.subject || 'mathematics';
-            const chaptersArr = getChaptersArray(subject);
+        // Merge progress for all subjects
+        const progressMap: { [key: string]: boolean[] } = {}
+        if (mathProgress && mathProgress.length > 0) {
+          mathProgress.forEach((row: any) => {
+            const chaptersArr = getChaptersArray('mathematics');
             const topicsLength = chaptersArr[row.chapter_idx]?.topics.length || 0;
             let checked = Array.isArray(row.checked_topics)
               ? row.checked_topics.slice(0, topicsLength).concat(Array(topicsLength).fill(false)).slice(0, topicsLength)
               : Array(topicsLength).fill(false);
-            progressMap[`${subject}-${row.chapter_idx}`] = checked;
-          })
-          setCheckedTopics(progressMap)
+            progressMap[`mathematics-${row.chapter_idx}`] = checked;
+          });
         }
+        if (physicsProgress && physicsProgress.length > 0) {
+          physicsProgress.forEach((row: any) => {
+            const chaptersArr = getChaptersArray('physics');
+            const topicsLength = chaptersArr[row.chapter_idx]?.topics.length || 0;
+            let checked = Array.isArray(row.checked_topics)
+              ? row.checked_topics.slice(0, topicsLength).concat(Array(topicsLength).fill(false)).slice(0, topicsLength)
+              : Array(topicsLength).fill(false);
+            progressMap[`physics-${row.chapter_idx}`] = checked;
+          });
+        }
+        if (chemistryProgress && chemistryProgress.length > 0) {
+          chemistryProgress.forEach((row: any) => {
+            const chaptersArr = getChaptersArray('chemistry');
+            const topicsLength = chaptersArr[row.chapter_idx]?.topics.length || 0;
+            let checked = Array.isArray(row.checked_topics)
+              ? row.checked_topics.slice(0, topicsLength).concat(Array(topicsLength).fill(false)).slice(0, topicsLength)
+              : Array(topicsLength).fill(false);
+            progressMap[`chemistry-${row.chapter_idx}`] = checked;
+          });
+        }
+        setCheckedTopics(progressMap)
       } catch (err) {
         console.error('Error loading progress or ongoing:', err)
       }
@@ -90,7 +112,7 @@ export default function DashboardPage() {
       const chapterChecks = prev[key] || Array(chaptersArr[chapterIdx].topics.length).fill(false)
       const newChecks = [...chapterChecks]
       newChecks[topicIdx] = !newChecks[topicIdx]
-      saveProgress(userId!, chapterIdx, newChecks).catch((err) => {
+      saveProgress(userId!, subject, chapterIdx, newChecks).catch((err) => {
         console.error('Error saving progress:', err)
       })
       return { ...prev, [key]: newChecks }
@@ -109,7 +131,7 @@ export default function DashboardPage() {
     const chaptersArr = getChaptersArray(subject);
     const allChecked = Array(chaptersArr[chapterIdx].topics.length).fill(true);
     setCheckedTopics((prev) => {
-      saveProgress(userId!, chapterIdx, allChecked).catch((err) => {
+      saveProgress(userId!, subject, chapterIdx, allChecked).catch((err) => {
         console.error('Error saving progress:', err);
       });
       return { ...prev, [`${subject}-${chapterIdx}`]: allChecked };
