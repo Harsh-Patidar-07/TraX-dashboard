@@ -66,7 +66,7 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean;
                   size="icon"
                   className={cn(
                     "h-9 w-9",
-                    !isCollapsed && "w-full justify-start gap-2"
+                    !isCollapsed && "w-full justify-start gap-2 px-4"
                   )}
                 >
                   <Link href="/">
@@ -94,7 +94,7 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean;
                   size="icon"
                   className={cn(
                     "h-9 w-9",
-                    !isCollapsed && "w-full justify-start gap-2"
+                    !isCollapsed && "w-full justify-start gap-2 px-4"
                   )}
                 >
                   <Link href="/subjects/mathematics">
@@ -116,7 +116,7 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean;
                   size="icon"
                   className={cn(
                     "h-9 w-9",
-                    !isCollapsed && "w-full justify-start gap-2"
+                    !isCollapsed && "w-full justify-start gap-2 px-4"
                   )}
                 >
                   <Link href="/subjects/physics">
@@ -138,7 +138,7 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean;
                   size="icon"
                   className={cn(
                     "h-9 w-9",
-                    !isCollapsed && "w-full justify-start gap-2"
+                    !isCollapsed && "w-full justify-start gap-2 px-4"
                   )}
                 >
                   <Link href="/subjects/chemistry">

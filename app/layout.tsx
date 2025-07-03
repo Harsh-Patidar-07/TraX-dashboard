@@ -6,6 +6,7 @@ import { Sidebar } from "@/components/ui/sidebar";
 import dynamic from "next/dynamic";
 import ClientLayout from "./client-layout";
 import VantaBackgroundClient from "@/components/ui/VantaBackgroundClient";
+import StagewiseToolbarClient from "@/components/StagewiseToolbarClient";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,6 +43,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${museoModerno.variable} antialiased text-foreground min-h-screen`}
       >
         <VantaBackgroundClient />
+        <StagewiseToolbarClient />
         <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
