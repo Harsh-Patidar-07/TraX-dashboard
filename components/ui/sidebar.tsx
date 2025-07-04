@@ -81,9 +81,7 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean;
 
           <Separator className="my-2" />
 
-          <div className={cn("text-sm font-medium text-muted-foreground px-2", isCollapsed && "hidden")}>
-            Subjects
-          </div>
+          <div className={cn("text-sm font-medium text-muted-foreground px-2", isCollapsed && "hidden")}>Subjects</div>
 
           <TooltipProvider>
             <Tooltip>
@@ -161,7 +159,7 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean;
             size="icon"
             className={cn(
               "h-9 w-9",
-              !isCollapsed && "w-full justify-start gap-2"
+              !isCollapsed && "w-full justify-start pl-4 gap-2"
             )}
             onClick={() => setAuthDialogOpen(true)}
           >

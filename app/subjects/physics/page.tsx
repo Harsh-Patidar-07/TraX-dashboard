@@ -21,14 +21,14 @@ export default function PhysicsPage() {
     async function loadOngoingAndProgress() {
       try {
         const [ongoing, progress] = await Promise.all([
-          fetchOngoingChapters(userId!, subject),
-          fetchProgress(userId!, subject)
+          fetchOngoingChapters(userId!, 'physics'),
+          fetchProgress(userId!, 'physics')
         ]);
         setOngoingChaptersState(ongoing || []);
         if (progress && progress.length > 0) {
           const progressMap: { [key: string]: boolean[] } = {};
           progress.forEach((row: any) => {
-            progressMap[`${subject}-${row.chapter_idx}`] = row.checked_topics;
+            progressMap[`physics-${row.chapter_idx}`] = row.checked_topics;
           });
           setCheckedTopics(progressMap);
         }
@@ -67,7 +67,7 @@ export default function PhysicsPage() {
       } else {
         updated = [...prev, idx];
       }
-      saveOngoingChapters(userId!, subject, updated).catch(console.error);
+      saveOngoingChapters(userId!, 'physics', updated).catch(console.error);
       return updated;
     });
     setTimeout(() => {
@@ -88,7 +88,7 @@ export default function PhysicsPage() {
       const filtered = ongoingChapters.filter((chapterIdx) => !isChapterCompleted(chapterIdx));
       if (filtered.length !== ongoingChapters.length) {
         setOngoingChaptersState(filtered);
-        saveOngoingChapters(userId!, subject, filtered).catch(console.error);
+        saveOngoingChapters(userId!, 'physics', filtered).catch(console.error);
       }
     }
   }, [checkedTopics]);
@@ -111,7 +111,7 @@ export default function PhysicsPage() {
     <div className="min-h-screen py-12 px-4">
       <Card className="w-full max-w-7xl mx-auto mt-2 bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-8 md:p-12 flex flex-col gap-10 border border-white/10">
         <div className="text-left">
-          <h1 className="text-3xl font-normal tracking-tight mb-2 font-mono">Physics</h1>
+          <h1 className="text-3xl font-normal tracking-tight mb-2 font-tektur">Physics</h1>
         </div>
         <div className="max-w-5xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-8">
           {chapters.map((chapter, idx) => {

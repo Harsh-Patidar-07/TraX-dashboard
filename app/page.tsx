@@ -167,7 +167,7 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+        <h2 className="text-3xl font-bold tracking-tight font-tektur">Dashboard</h2>
         <p className="text-muted-foreground">
           Track your progress across all subjects
         </p>
@@ -298,7 +298,7 @@ export default function DashboardPage() {
       {/* Ongoing Chapters Section */}
       {ongoing.length > 0 ? (
         <div className="space-y-6 mt-10">
-          <h3 className="text-2xl font-normal text-white mb-10 font-mono text-center">Ongoing Chapters</h3>
+          <h3 className="text-lg font-normal text-white mb-10 font-tektur text-center">Ongoing Chapters</h3>
           <div className="flex flex-col gap-6">
             <AnimatePresence>
               {ongoing.map(({ subject, chapterIdx }) => {
@@ -373,7 +373,7 @@ export default function DashboardPage() {
         </div>
       ) : (
         <div className="space-y-6 mt-10">
-          <h3 className="text-2xl font-normal text-white mb-10 font-mono text-center">Ongoing Chapters</h3>
+          <h3 className="text-lg font-normal text-white mb-10 font-tektur text-center">Ongoing Chapters</h3>
           <div className="flex flex-col items-center justify-center min-h-[120px]">
             <span className="text-lg text-white/80">No ongoing chapters. Mark a chapter as ongoing from a subject page!</span>
           </div>

@@ -100,7 +100,7 @@ export default function MathematicsPage() {
       <Card className="w-full max-w-7xl mx-auto mt-2 bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-8 md:p-12 flex flex-col gap-10 border border-white/10">
         {/* Hero Section */}
         <div className="text-left">
-          <h1 className="text-3xl font-normal tracking-tight mb-2 font-mono">Mathematics</h1>
+          <h1 className="text-3xl font-normal tracking-tight mb-2 font-tektur">Mathematics</h1>
         </div>
         {/* Chapters Grid */}
         <div className="max-w-5xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-8">

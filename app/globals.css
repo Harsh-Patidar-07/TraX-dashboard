@@ -225,3 +225,13 @@ html, body {
   transform: rotate(45deg);
   display: block;
 }
+
+.font-museo-moderno {
+  font-family: var(--font-museo-moderno), cursive;
+  font-weight: 400;
+}
+
+.font-tektur {
+  font-family: var(--font-tektur), cursive !important;
+  font-weight: 400;
+}

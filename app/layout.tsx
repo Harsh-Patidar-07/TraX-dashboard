@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { MuseoModerno } from "next/font/google";
+import { MuseoModerno, Tektur } from "next/font/google";
 import "./globals.css";
 import { Sidebar } from "@/components/ui/sidebar";
 import dynamic from "next/dynamic";
@@ -24,6 +24,12 @@ const museoModerno = MuseoModerno({
   weight: ["400", "500", "600", "700"],
 });
 
+const tektur = Tektur({
+  variable: "--font-tektur",
+  subsets: ["latin"],
+  weight: ["400", "700"],
+});
+
 export const metadata: Metadata = {
   title: "TraX",
   description: "TraX Application",
@@ -40,7 +46,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${museoModerno.variable} antialiased text-foreground min-h-screen`}
+        className={`${geistSans.variable} ${geistMono.variable} ${museoModerno.variable} ${tektur.variable} antialiased text-foreground min-h-screen`}
       >
         <VantaBackgroundClient />
         <StagewiseToolbarClient />
