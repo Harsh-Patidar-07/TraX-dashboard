@@ -204,7 +204,7 @@ export default function DashboardPage() {
                 />
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-2xl font-bold">{mathProgress}%</span>
+                <span className="text-2xl font-normal [font-family:var(--font-chakra-petch)]">{mathProgress}%</span>
               </div>
             </div>
             <div className="text-center">
@@ -244,7 +244,7 @@ export default function DashboardPage() {
                 />
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-2xl font-bold">{physicsProgress}%</span>
+                <span className="text-2xl font-normal [font-family:var(--font-chakra-petch)]">{physicsProgress}%</span>
               </div>
             </div>
             <div className="text-center">
@@ -284,7 +284,7 @@ export default function DashboardPage() {
                 />
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-2xl font-bold">{chemistryProgress}%</span>
+                <span className="text-2xl font-normal [font-family:var(--font-chakra-petch)]">{chemistryProgress}%</span>
               </div>
             </div>
             <div className="text-center">

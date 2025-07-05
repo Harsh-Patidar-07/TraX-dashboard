@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { MuseoModerno, Tektur } from "next/font/google";
+import { Chakra_Petch } from "next/font/google";
 import "./globals.css";
 import { Sidebar } from "@/components/ui/sidebar";
 import dynamic from "next/dynamic";
@@ -30,6 +31,12 @@ const tektur = Tektur({
   weight: ["400", "700"],
 });
 
+const chakraPetch = Chakra_Petch({
+  variable: "--font-chakra-petch",
+  subsets: ["latin"],
+  weight: ["300"],
+});
+
 export const metadata: Metadata = {
   title: "TraX",
   description: "TraX Application",
@@ -46,7 +53,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${museoModerno.variable} ${tektur.variable} antialiased text-foreground min-h-screen`}
+        className={`${geistSans.variable} ${geistMono.variable} ${museoModerno.variable} ${tektur.variable} ${chakraPetch.variable} antialiased text-foreground min-h-screen`}
       >
         <VantaBackgroundClient />
         <StagewiseToolbarClient />
