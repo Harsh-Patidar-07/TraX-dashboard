@@ -30,7 +30,22 @@ export default function DashboardPage() {
   const { user, loading } = useSupabaseUser();
   const [ongoing, setOngoing] = useState<{ subject: string, chapterIdx: number }[]>([])
   const [checkedTopics, setCheckedTopics] = useState<{ [key: string]: boolean[] }>({})
+  const [checklist, setChecklist] = useState<{ [key: string]: boolean[] }>({});
   const userId = user?.id;
+  const checklistItems = [
+    { label: "Chapter Understood", gradient: "from-green-400 to-emerald-600" },
+    { label: "One shots", gradient: "from-blue-400 to-cyan-500" },
+    { label: "Questions / Numericals", gradient: "from-amber-400 to-orange-500" },
+    { label: "PYQ's", gradient: "from-violet-400 to-fuchsia-500" },
+  ];
+  const handleChecklist = (key: string, idx: number) => {
+    setChecklist(prev => {
+      const arr = prev[key] || [false, false, false, false];
+      const newArr = [...arr];
+      newArr[idx] = !newArr[idx];
+      return { ...prev, [key]: newArr };
+    });
+  };
 
   useEffect(() => {
     if (!userId) return;
@@ -305,6 +320,7 @@ export default function DashboardPage() {
                 const chaptersArr = getChaptersArray(subject);
                 if (!Array.isArray(chaptersArr) || !chaptersArr[chapterIdx]) return null;
                 const chapter = chaptersArr[chapterIdx];
+                const checklistKey = `${subject}-${chapterIdx}`;
                 return (
                   <motion.div
                     key={`${subject}-${chapter.name}`}
@@ -312,7 +328,7 @@ export default function DashboardPage() {
                     exit={{ opacity: 0, y: 40, scale: 0.95 }}
                     transition={{ duration: 0.5, ease: "easeInOut" }}
                   >
-                    <Card className="w-full max-w-3xl mx-auto flex flex-col md:flex-row gap-6 p-8 bg-white/10 backdrop-blur-lg rounded-2xl shadow-xl border border-white/10">
+                    <Card className="w-full max-w-5xl mx-auto flex flex-col md:flex-row gap-8 p-8 bg-white/10 backdrop-blur-lg rounded-2xl shadow-xl border border-white/10">
                       <div className="flex-1 flex flex-col gap-2 justify-center">
                         <span className="text-lg font-bold text-white/90">{subject.charAt(0).toUpperCase() + subject.slice(1)}</span>
                         <span className="text-2xl font-semibold text-white">{chapter.name}</span>
@@ -363,6 +379,30 @@ export default function DashboardPage() {
                             Leave this
                           </button>
                         </div>
+                      </div>
+                      {/* Checklist column */}
+                      <div className="w-56 flex flex-col gap-3 rounded-xl p-2 min-w-[140px]">
+                        {checklistItems.map((item, idx) => (
+                          <label
+                            key={item.label}
+                            className={`relative flex items-center gap-2 font-medium hover:bg-white/5 transition rounded-lg px-1 py-1 cursor-pointer text-sm`}
+                          >
+                            <span className="relative flex items-center justify-center h-4 w-4">
+                              <input
+                                type="checkbox"
+                                checked={!!(checklist[checklistKey]?.[idx])}
+                                onChange={() => handleChecklist(checklistKey, idx)}
+                                className="peer appearance-none h-4 w-4 rounded-full border-2 border-white/30 bg-transparent shadow-none focus:ring-1 focus:ring-white/30 checked:bg-[#10b981] checked:border-[#10b981] transition"
+                              />
+                              <span className="pointer-events-none absolute inset-0 flex items-center justify-center text-[0.8rem] font-bold text-white opacity-0 peer-checked:opacity-100">
+                                ✓
+                              </span>
+                            </span>
+                            <span className={`ml-1 bg-gradient-to-r ${item.gradient} bg-clip-text text-transparent font-semibold transition-all peer-checked:line-through`}>
+                              {item.label}
+                            </span>
+                          </label>
+                        ))}
                       </div>
                     </Card>
                   </motion.div>
